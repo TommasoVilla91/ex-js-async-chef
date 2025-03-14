@@ -1,27 +1,41 @@
 ///// SNACK 1
-async function fetchJson(url) {
-    const response = await fetch(url);
-    const obj = await response.json();
-    return obj;
-};
-
 async function getChefBirthday(id) {
-    const recipe = await fetchJson(`https://dummyjson.com/recipes/${id}`);
-    const chef = await fetchJson(`https://dummyjson.com/users/${recipe.userId}`);
+    
+    // BONUS 1 (fatto guardando correzione)
+    let recipe;
+    try {
+        const recipeResponse = await fetch(`https://dummyjson.com/recipes/${id}`);
+        recipe = await recipeResponse.json();
+    } catch(error) {
+        console.error(error);
+        throw new Error(`Non riescoa a recuperare la ricetta ${id}!`);
+    };
 
+    if(recipe.message) {
+        throw new Error(recipe.message);
+    };
+
+    let chef;
+    try {
+        const chefResponse = await fetch(`https://dummyjson.com/users/${recipe.userId}`);
+        chef = await chefResponse.json();
+    } catch(error) {
+        console.error(error);
+        throw new Error(`Non riescoa a recuperare lo chef ${id}!`)
+    }
+
+    if(chef.message) {
+        throw new Error(chef.message);
+    };
+   
     return chef.birthDate;
 }
 
-try {
-    getChefBirthday(1);  
-} catch(error) {
-    console.error(error);
-};
-
-getChefBirthday(1)
-  .then(birthday => console.log("Data di nascita dello chef:", birthday))
-  .catch(error => console.error("Errore:", error.message));
-
-
-
-
+(async() => {
+    try {
+        const birthday = await getChefBirthday(1);
+        console.log("Data di nascita dello chef:", birthday);
+    } catch(error) {
+        console.error("Errore:", error.message);
+    };
+})();
