@@ -21,14 +21,16 @@ async function getChefBirthday(id) {
         chef = await chefResponse.json();
     } catch(error) {
         console.error(error);
-        throw new Error(`Non riescoa a recuperare lo chef ${id}!`)
+        throw new Error(`Non riescoa a recuperare lo chef ${id}!`);
     }
 
     if(chef.message) {
         throw new Error(chef.message);
     };
-   
-    return chef.birthDate;
+     
+    // BONUS 2
+    const newDate = dayjs(chef.birthDate).format('DD/MM/YYYY');
+    return newDate;
 }
 
 (async() => {
